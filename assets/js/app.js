@@ -8,7 +8,7 @@
 window.addEventListener('DOMContentLoaded', function(){
     var game = {
         currentQuestion: {},
-        gameTimer: 4,
+        gameTimer: 90,
         questions: [
             {
                 question:"Is the sky sometimes blue?",
@@ -35,6 +35,7 @@ window.addEventListener('DOMContentLoaded', function(){
                 answered: false
             }
         ],
+        timerPaused: false,
         loadQuestion: function(){
             // debugger;
             var questionHolder = $('#question-holder');
@@ -69,7 +70,8 @@ window.addEventListener('DOMContentLoaded', function(){
                 game.currentQuestion.answered = true;
                 var guess = $(this).get(0).value;
                 if (guess === game.currentQuestion.answer){
-                    alert('correct');
+                    // alert('correct');
+                    game.timerPaused = true;
                 } else {
                     alert('incorrect');
                 }
@@ -99,13 +101,17 @@ window.addEventListener('DOMContentLoaded', function(){
                 });
                 // find timer containers
                 // set the innerText with the current time
-                if (game.gameTimer === 0){
+                if (game.gameTimer === 0 || game.timerPaused){
                     clearInterval(timer);
                     // alert("Time's up!!!");
-                }
+                } 
             },1000);
         }
     };
     game.timer()
     game.loadQuestion();
+    $('button').click(function(){
+        game.timerPaused = false;
+        game.timer();
+    });
 });
