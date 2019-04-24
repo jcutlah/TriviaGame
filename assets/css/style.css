@@ -1,0 +1,9 @@
+#start-game-container {
+    text-align: center;
+}
+h2.question {
+    text-align: center;
+}
+.answer span {
+    padding-left: 20px;
+}

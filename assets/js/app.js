@@ -7,8 +7,10 @@
 // click listeners: startGame button, questionAnswer
 window.addEventListener('DOMContentLoaded', function(){
     var game = {
+        correctAnswers: 0,
         currentQuestion: {},
         gameTimer: 90,
+        incorrectAnswers: 0,
         questions: [
             {
                 question:"Is the sky sometimes blue?",
@@ -36,30 +38,70 @@ window.addEventListener('DOMContentLoaded', function(){
             }
         ],
         timerPaused: false,
+        unansweredQuestions: 0,
+        celebrateAnswer: function(){
+            this.correctAnswers ++;
+            $('#question-holder .question-card').hide('slow', function(){ 
+                $('#question-holder .question-card').remove();
+                game.loadQuestion();
+            });
+            setTimeout(function(){
+                game.timerPaused = false;
+                game.timer();
+            }, 1000);
+        },
+        checkAnswer: function(event){
+            this.unansweredQuestions --;
+            this.currentQuestion.answered = true;
+            var guess = event.get(0).value;
+            if (guess === game.currentQuestion.answer){
+                game.timerPaused = true;
+                this.celebrateAnswer();
+            } else {
+                alert('incorrect');
+            }
+        },
+        falseAnswer: function(){
+            this.incorrectAnswers ++;
+        },
+        gameOver: function(){
+            console.log('running game over()');
+            $('#correct-answers').text(this.correctAnswers);
+            $('#incorrect-answers').text(this.incorrectAnswers);
+        },
         loadQuestion: function(){
             // debugger;
+            console.log('running loadQuestin()');
+            console.log(this.unansweredQuestions)
+            if (this.unansweredQuestions === 0){
+                // run endgame function
+                this.gameOver();
+                return false;
+            }
             var questionHolder = $('#question-holder');
             var question = $('<div>');
+            var answerContainer = $('<div>');
+            answerContainer.addClass('answer-container');
             var timer = $('<div>');
-            var questionForm = 
-            timer.addClass('timer');
             question.addClass('question-card');
             question.append(timer);
             for (i=0;i<this.questions.length;i++){
                 if (!this.questions[i].answered){
                     this.currentQuestion = this.questions[i];
                     console.log(game);
-                    question.append("<p class=question>"+ this.questions[i].question +"</p>");
-                    // debugger;
+                    question.append("<h2 class=question>"+ this.questions[i].question +"</h2>");
                     for (ind=0;ind<this.questions[i].answers.length;ind++){
                         var answer = $('<input>');
                         var answerHolder = $('<p>');
+                        var answerText = $('<span>');
                         answerHolder.addClass('answer');
                         answer.attr('type','radio');
                         answer.val(this.questions[i].answers[ind]);
-                        answerHolder.text(this.questions[i].answers[ind])
+                        answerText.text(this.questions[i].answers[ind])
                         answerHolder.prepend(answer);
-                        question.append(answerHolder);
+                        answerHolder.append(answerText);
+                        answerContainer.append(answerHolder);
+                        question.append(answerContainer);
                     };
                     break; 
                 }
@@ -67,15 +109,16 @@ window.addEventListener('DOMContentLoaded', function(){
             };
             questionHolder.append(question);
             $('.answer input').click(function(){
-                game.currentQuestion.answered = true;
-                var guess = $(this).get(0).value;
-                if (guess === game.currentQuestion.answer){
-                    // alert('correct');
-                    game.timerPaused = true;
-                } else {
-                    alert('incorrect');
-                }
+                game.checkAnswer($(this));
             });
+        },
+        setUpGame: function(){
+            this.unansweredQuestions = this.questions.length;
+            $('#start-game-container').hide('slow', function(){
+                $('#start-game-container').remove();
+            });
+            this.loadQuestion();
+            this.timer();
         },
         timeConverter: function(t) {
             var minutes = Math.floor(t / 60);
@@ -92,26 +135,19 @@ window.addEventListener('DOMContentLoaded', function(){
             return minutes + ":" + seconds;
         },
         timer: function(){
+            timeNow = game.timeConverter(game.gameTimer);
+            $('.timer').text(timeNow);
             var timer = setInterval(function(){
-                // decrement gameTimer
-                game.gameTimer--;
                 timeNow = game.timeConverter(game.gameTimer);
-                $('.timer').each(function(){
-                    $(this).text(timeNow);
-                });
-                // find timer containers
-                // set the innerText with the current time
+                $('.timer').text(timeNow);
+                game.gameTimer--;
                 if (game.gameTimer === 0 || game.timerPaused){
                     clearInterval(timer);
-                    // alert("Time's up!!!");
                 } 
             },1000);
         }
     };
-    game.timer()
-    game.loadQuestion();
-    $('button').click(function(){
-        game.timerPaused = false;
-        game.timer();
+    $('#start-game-container button').click(function(){
+        game.setUpGame();
     });
 });
