@@ -10,9 +10,10 @@
     <link rel="shortcut icon" type="image/png" href="assets/images/questionIcon.png"/>
 </head>
 <body>
+    <div id="danger-overlay"></div>
     <div class='container'>
-        <div class="row">
-            <div class="col-12 game-card jumbotron">
+        <div class="row full-height">
+            <div class="col-12 game-card jumbotron align-self-center">
                 <div class="container-fluid">
                     <div class="row justify-content-center">
                         <div class="col-8">
@@ -25,8 +26,8 @@
                             </div>
                             <div id="question-holder"></div>
                             <div id="game-over">
-                                <p id="correct-answers"></p>
-                                <p id="incorrect-answers"></p>
+                                <p>Correct Answers: <span id="correct-answers"></span></p>
+                                <p>Incorrect Answers: <span id="incorrect-answers"></span></p>
                             </div>
                         </div>
                     </div>
@@ -36,7 +37,6 @@
         </div>
     </div>
     
-
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="assets/js/app.js"></script>
 </body>

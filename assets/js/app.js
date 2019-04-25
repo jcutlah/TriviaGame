@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', function(){
     var game = {
         correctAnswers: 0,
         currentQuestion: {},
-        gameTimer: 90,
+        gameTimer: 10,
         incorrectAnswers: 0,
         questions: [
             {
@@ -37,37 +37,49 @@ window.addEventListener('DOMContentLoaded', function(){
                 answered: false
             }
         ],
+        isLive: true, 
         timerPaused: false,
         unansweredQuestions: 0,
         celebrateAnswer: function(){
             this.correctAnswers ++;
-            $('#question-holder .question-card').hide('slow', function(){ 
-                $('#question-holder .question-card').remove();
-                game.loadQuestion();
-            });
-            setTimeout(function(){
-                game.timerPaused = false;
-                game.timer();
-            }, 1000);
+            
         },
         checkAnswer: function(event){
             this.unansweredQuestions --;
             this.currentQuestion.answered = true;
             var guess = event.get(0).value;
+            game.timerPaused = true;
             if (guess === game.currentQuestion.answer){
-                game.timerPaused = true;
                 this.celebrateAnswer();
             } else {
-                alert('incorrect');
+                this.falseAnswer();
+            }
+            if (this.unansweredQuestions > 0){
+                this.rotateQuestions();
+            } else {
+                this.removeQuestion();
+                this.gameOver();
             }
         },
         falseAnswer: function(){
             this.incorrectAnswers ++;
+            // this.rotateQuestions();
         },
         gameOver: function(){
+            // debugger;
+            this.isLive = false;
+            this.timerPaused = true;
+            this.incorrectAnswers += this.unansweredQuestions;
             console.log('running game over()');
+            $('#danger-overlay').removeClass('danger-zone');
+            $('#game-over').show();
             $('#correct-answers').text(this.correctAnswers);
             $('#incorrect-answers').text(this.incorrectAnswers);
+        },
+        removeQuestion: function(){
+            $('#question-holder .question-card').hide('slow', function(){ 
+                $('#question-holder .question-card').remove();
+            });
         },
         loadQuestion: function(){
             // debugger;
@@ -82,9 +94,7 @@ window.addEventListener('DOMContentLoaded', function(){
             var question = $('<div>');
             var answerContainer = $('<div>');
             answerContainer.addClass('answer-container');
-            var timer = $('<div>');
             question.addClass('question-card');
-            question.append(timer);
             for (i=0;i<this.questions.length;i++){
                 if (!this.questions[i].answered){
                     this.currentQuestion = this.questions[i];
@@ -109,8 +119,24 @@ window.addEventListener('DOMContentLoaded', function(){
             };
             questionHolder.append(question);
             $('.answer input').click(function(){
+                if (game.unansweredQuestions === 1){
+                    // debugger;
+                }
                 game.checkAnswer($(this));
+
             });
+        },
+        rotateQuestions: function(){
+            this.removeQuestion();
+            setTimeout(function(){
+                game.loadQuestion();
+            }, 1000);
+            setTimeout(function(){
+                if (game.isLive){
+                    game.timerPaused = false;
+                    game.timer();
+                }
+            }, 1000);
         },
         setUpGame: function(){
             this.unansweredQuestions = this.questions.length;
@@ -119,6 +145,12 @@ window.addEventListener('DOMContentLoaded', function(){
             });
             this.loadQuestion();
             this.timer();
+        },
+        timeAlert: function(){
+            if (this.gameTimer < 10 && this.unansweredQuestions > 0){
+                // console.log('alert');
+                $('#danger-overlay').toggleClass('danger-zone');                   
+            }
         },
         timeConverter: function(t) {
             var minutes = Math.floor(t / 60);
@@ -138,12 +170,20 @@ window.addEventListener('DOMContentLoaded', function(){
             timeNow = game.timeConverter(game.gameTimer);
             $('.timer').text(timeNow);
             var timer = setInterval(function(){
+                // console.log(game.gameTimer);
+                game.timeAlert();
                 timeNow = game.timeConverter(game.gameTimer);
                 $('.timer').text(timeNow);
-                game.gameTimer--;
-                if (game.gameTimer === 0 || game.timerPaused){
+                if (game.timerPaused){
                     clearInterval(timer);
-                } 
+                } else if (game.gameTimer === 0){
+                    clearInterval(timer);
+                    $('#question-holder .question-card').hide('slow', function(){ 
+                        $('#question-holder .question-card').remove();
+                        game.gameOver();
+                    });
+                }
+                game.gameTimer--;
             },1000);
         }
     };
