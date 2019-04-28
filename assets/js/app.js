@@ -279,7 +279,6 @@ window.addEventListener('DOMContentLoaded', function(){
                     typeSpeed: 50,
                     onComplete: function(){
                         setTimeout(function(){
-                            $('#click-below').show();
                             $('#start-game-btn').show();
                         }, 1500);
                         
@@ -298,7 +297,7 @@ window.addEventListener('DOMContentLoaded', function(){
         }
     };
     setTimeout(function(){
-        game.typer("#have-a-seat",["Have a seat. We're gonna need you to answer some questions.","We know what you did, so don't think you can mess with us.","Now, you're gonna answer some random trivia questions for us right now.","...Or else."], false, false);
+        game.typer("#have-a-seat",["Have a seat. We're gonna need you to answer some questions.","We know what you did, so don't think you can mess with us.","Now, you're gonna answer some random trivia questions for us right now.","...Or else.","Click below to get started"], false, false);
     },1000);
     $('#start-game-btn').click(function(){
         game.setUpGame();
