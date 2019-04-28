@@ -26,6 +26,7 @@ h2.question {
 }
 #game-over {
     display: none;
+    text-align: center;
 }
 body {
     background-image: url('../images/interrogation.jpg');
@@ -46,4 +47,31 @@ body {
 .game-card button {
     border: 1px solid #fff;
     box-shadow: 1px 2px 2px 0px #ccc;
+}
+#typed-container{
+    color: #fff;
+}
+#have-a-seat{
+    display: inline;
+}
+.game-card-inner {
+    position: relative;
+}
+#celebrate {
+    display: none;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    top: 5%;
+    left: 0;
+    background-color: #111e21;
+    color: #fff;
+    font-size: 20px;
+    font-family: sans-serif;
+    font-weight: 400;
+}
+#click-below,
+#start-game-btn {
+    display: none;
 }

@@ -13,31 +13,38 @@
     <div id="danger-overlay"></div>
     <div class='container'>
         <div class="row full-height">
+            <!-- <div class="col-12 typed-wrapper">
+                <p id="typed-container"></p>
+            </div> -->
             <div class="col-12 game-card jumbotron align-self-center">
                 <div class="container-fluid">
                     <div class="row justify-content-center">
-                        <div class="col-8">
+                        <div class="col-8 game-card-inner">
                             <div class="timer"></div>
                             <div id="start-game-container">
-                                <h1>Trivia Game</h1>
-                                <h3>Test Your Might</h3>
-                                <p>Click below to get started</p>
-                                <button>Start Game</button>
+                                <!-- <h1>Trivia Game</h1> -->
+                                <h3 id="have-a-seat"></h3>
+                                <p id="click-below">Click below to get started</p>
+                                <button id="start-game-btn">Start Game</button>
                             </div>
                             <div id="question-holder"></div>
                             <div id="game-over">
+                                <p>Game Over</p>
                                 <p>Correct Answers: <span id="correct-answers"></span></p>
                                 <p>Incorrect Answers: <span id="incorrect-answers"></span></p>
+                                <button id="reset">Reset Game</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-            </div>            
+            </div>
+            <div id="celebrate"></div>            
         </div>
     </div>
     
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
     <script src="assets/js/app.js"></script>
 </body>
 </html>

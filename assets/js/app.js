@@ -9,31 +9,63 @@ window.addEventListener('DOMContentLoaded', function(){
     var game = {
         correctAnswers: 0,
         currentQuestion: {},
-        gameTimer: 10,
+        gameTimer: 30,
         incorrectAnswers: 0,
         questions: [
             {
                 question:"Is the sky sometimes blue?",
-                answers:["yes","no","well that depends, are we assuming the earth is flat?"],
-                correctAnswer:"yes",
-                celebrate:"Wooop wooop!",
+                answers:["yes","no","I guess I don't fully understand the question"],
+                celebrate:"Eh, nice work. But we're just getting started.",
+                false: "You make me sick already",
                 answer: "yes",
                 answered: false
             },
             {
-                question:"Why do babies cry?",
-                answers:["growing is hard","they hate their makers"],
-                correctAnswer:"growing is hard",
-                celebrate:"Nice work!",
-                answer: "growing is hard",
+                question:"According to Holden Caulfield, how can most people be labeled? (aside from nuns and Phoebe, of course)",
+                answers:["self-centered","insecure","phony","apathetic"],
+                celebrate:"You might have gotten this right, but I don't think you actually GET it",
+                false: "Whatever it was, I think you just proved him right",
+                answer: "phony",
                 answered: false
             },
             {
-                question:"Do you love Toby?",
-                answers:["yes, duh","no thanks","who is Toby?"],
-                correctAnswer:"yes, duh",
-                celebrate:"Ruff!?",
-                answer: "yes, duh",
+                question:"How many bends does a standard paperclip have?",
+                answers:["6","2","4","3"],
+                celebrate:"Amazing",
+                false: "I have no words",
+                answer: "3",
+                answered: false
+            },
+            {
+                question:"Why do babies cry?",
+                answers:["growing up is hard","they hate their makers"],
+                celebrate:"Nice work!",
+                false: "Oh come on!!",
+                answer: "growing up is hard",
+                answered: false
+            },
+            {
+                question:"Who was the only one of the six main characters on \"Friends\" to not get married at any time on the show??",
+                answers:["Phoebe","Joey","Ross","Monica"],
+                celebrate:"Sad but true.",
+                false: "You really should watch the show more, ya know",
+                answer: "Joey",
+                answered: false
+            },
+            {
+                question:"What was the first national park in the United States?",
+                answers:["Yosemite","Everglades","Yellowstone","Zion"],
+                celebrate:"Send it, brah!!",
+                false: "Harsh, dude",
+                answer: "Yellowstone",
+                answered: false
+            },
+            {
+                question:"What mathematical formula was allegedly first discovered by Pythagoras?",
+                answers:["a^2 + b^2 = c^2","y = mx + b","e = mc^2"],
+                celebrate:"Looks like someone was paying attention",
+                false: "I feel like this was an easy one, buuuuut okay.",
+                answer: "a^2 + b^2 = c^2",
                 answered: false
             }
         ],
@@ -42,10 +74,22 @@ window.addEventListener('DOMContentLoaded', function(){
         unansweredQuestions: 0,
         celebrateAnswer: function(){
             this.correctAnswers ++;
-            
+            // $('#question-holder').hide();
+            var celebrate = $('#celebrate');
+            celebrate.text('');
+            celebrate.show();
+            this.typer('#celebrate', [this.currentQuestion.celebrate], true, true);
+            // celebrate.text(this.currentQuestion.celebrate);
+            console.log(this.currentQuestion.celebrate);
+            setTimeout(function(){
+                // game.wait(1500);
+                // celebrate.hide();
+                $('#question-holder').show();
+            }, 5000);
         },
         checkAnswer: function(event){
             this.unansweredQuestions --;
+            this.removeQuestion();
             this.currentQuestion.answered = true;
             var guess = event.get(0).value;
             game.timerPaused = true;
@@ -54,27 +98,57 @@ window.addEventListener('DOMContentLoaded', function(){
             } else {
                 this.falseAnswer();
             }
-            if (this.unansweredQuestions > 0){
-                this.rotateQuestions();
-            } else {
-                this.removeQuestion();
-                this.gameOver();
-            }
+            // if (this.unansweredQuestions > 0){
+            //     // this.rotateQuestions();
+            // } else {
+            //     // this.removeQuestion();
+            //     this.gameOver();
+            // }
         },
         falseAnswer: function(){
             this.incorrectAnswers ++;
             // this.rotateQuestions();
+            // $('#question-holder').hide();
+            var bummer = $('#celebrate');
+            bummer.text('');
+            bummer.show();
+            this.typer('#celebrate', [this.currentQuestion.false], true, true);
+            
+            
+            // bummer.text(this.currentQuestion.false);
+            console.log(this.currentQuestion.false);
+            setTimeout(function(){
+                // game.wait(2500);
+                // bummer.text('');
+                $('#question-holder').show();
+                // bummer.hide();
+            }, 5000);
         },
         gameOver: function(){
-            // debugger;
-            this.isLive = false;
-            this.timerPaused = true;
-            this.incorrectAnswers += this.unansweredQuestions;
-            console.log('running game over()');
+            setTimeout(function(){
+                game.isLive = false;
+                game.timerPaused = true;
+                game.incorrectAnswers += game.unansweredQuestions;
+                console.log('running game over()');
+                $('#danger-overlay').removeClass('danger-zone');
+                $('#game-over').show();
+                $('#correct-answers').text(game.correctAnswers);
+                $('#incorrect-answers').text(game.incorrectAnswers);
+            }, 1000);
+        },
+        reset: function(){
+            this.correctAnswers = 0;
+            this.currentQuestion = {};
+            this.gameTimer = 60;
+            this.incorrectAnswers = 0;
+            this.isLive = true;
+            this.timerPaused = false;
+            this.unansweredQuestions = 0;
+            for(i=0;i<this.questions.length;i++){
+                this.questions[i].answered = false;
+            }
             $('#danger-overlay').removeClass('danger-zone');
-            $('#game-over').show();
-            $('#correct-answers').text(this.correctAnswers);
-            $('#incorrect-answers').text(this.incorrectAnswers);
+            $('#game-over').hide();
         },
         removeQuestion: function(){
             $('#question-holder .question-card').hide('slow', function(){ 
@@ -118,13 +192,6 @@ window.addEventListener('DOMContentLoaded', function(){
                 
             };
             questionHolder.append(question);
-            $('.answer input').click(function(){
-                if (game.unansweredQuestions === 1){
-                    // debugger;
-                }
-                game.checkAnswer($(this));
-
-            });
         },
         rotateQuestions: function(){
             this.removeQuestion();
@@ -139,15 +206,18 @@ window.addEventListener('DOMContentLoaded', function(){
             }, 1000);
         },
         setUpGame: function(){
+            // debugger;
             this.unansweredQuestions = this.questions.length;
+            this.loadQuestion();
+            this.timer();
             $('#start-game-container').hide('slow', function(){
                 $('#start-game-container').remove();
             });
-            this.loadQuestion();
-            this.timer();
+            // this.loadQuestion();
+            // this.timer();
         },
         timeAlert: function(){
-            if (this.gameTimer < 10 && this.unansweredQuestions > 0){
+            if (this.gameTimer < 5 && this.unansweredQuestions > 0){
                 // console.log('alert');
                 $('#danger-overlay').toggleClass('danger-zone');                   
             }
@@ -176,8 +246,9 @@ window.addEventListener('DOMContentLoaded', function(){
                 $('.timer').text(timeNow);
                 if (game.timerPaused){
                     clearInterval(timer);
-                } else if (game.gameTimer === 0){
+                } else if (game.gameTimer <= 0){
                     clearInterval(timer);
+                    game.gameTimer = 0;
                     $('#question-holder .question-card').hide('slow', function(){ 
                         $('#question-holder .question-card').remove();
                         game.gameOver();
@@ -185,9 +256,62 @@ window.addEventListener('DOMContentLoaded', function(){
                 }
                 game.gameTimer--;
             },1000);
+        },
+        typer: function(target, arr, hideAfter, isBetweenTurns){
+            if(hideAfter){
+                var options = {
+                    strings: arr,
+                    typeSpeed: 70,
+                    onComplete: function(){
+                        setTimeout(function(){
+                            $(target).hide('slow');
+                        }, 700);
+                        if (isBetweenTurns && game.unansweredQuestions > 0){
+                            game.rotateQuestions();
+                        } else if (isBetweenTurns && game.unansweredQuestions == 0){
+                            game.gameOver();
+                        }
+                    }
+                }
+            } else {
+                var options = {
+                    strings: arr,
+                    typeSpeed: 50,
+                    onComplete: function(){
+                        setTimeout(function(){
+                            $('#click-below').show();
+                            $('#start-game-btn').show();
+                        }, 1500);
+                        
+                    }
+                }
+            }
+            
+            var typed = new Typed(target, options);
+        },
+        wait: function(ms){
+            var start = Date.now(),
+                now = start;
+            while (now - start < ms) {
+                now = Date.now();
+            }
         }
     };
-    $('#start-game-container button').click(function(){
+    setTimeout(function(){
+        game.typer("#have-a-seat",["Have a seat. We're gonna need you to answer some questions.","We know what you did, so don't think you can mess with us.","Now, you're gonna answer some random trivia questions for us right now.","...Or else."], false, false);
+    },1000);
+    $('#start-game-btn').click(function(){
         game.setUpGame();
+    });
+    $('#reset').click(function(){
+        game.reset();
+        game.setUpGame();
+    });
+    $(document).on('click', '.answer input', function(){
+        if (game.unansweredQuestions === 1){
+            // debugger;
+        }
+        game.checkAnswer($(this));
+
     });
 });
