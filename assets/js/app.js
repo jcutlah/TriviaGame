@@ -9,7 +9,7 @@ window.addEventListener('DOMContentLoaded', function(){
     var game = {
         correctAnswers: 0,
         currentQuestion: {},
-        gameTimer: 30,
+        gameTimer: 0,
         incorrectAnswers: 0,
         questions: [
             {
@@ -207,6 +207,7 @@ window.addEventListener('DOMContentLoaded', function(){
         },
         setUpGame: function(){
             // debugger;
+            this.gameTimer = this.questions.length * 7;
             this.unansweredQuestions = this.questions.length;
             this.loadQuestion();
             this.timer();
@@ -217,7 +218,7 @@ window.addEventListener('DOMContentLoaded', function(){
             // this.timer();
         },
         timeAlert: function(){
-            if (this.gameTimer < 5 && this.unansweredQuestions > 0){
+            if (this.gameTimer < 10 && this.unansweredQuestions > 0){
                 // console.log('alert');
                 $('#danger-overlay').toggleClass('danger-zone');                   
             }
